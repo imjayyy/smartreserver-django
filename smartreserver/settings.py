@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'business',
     'authentication',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
