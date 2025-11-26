@@ -29,6 +29,16 @@ ALLOWED_HOSTS = []
 
 USERNAME_FIELD = 'email'
 
+AUTH_USER_MODEL = 'authentication.CustomUser'
+
+# Disable username and set email to be required for allauth forms
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_UNIQUE_EMAIL = True
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     'business',
+    'reservation',
     'authentication',
     'chatbot'
 ]
@@ -53,7 +64,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
 
 ROOT_URLCONF = 'smartreserver.urls'
