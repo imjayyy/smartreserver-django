@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
-
+    'rest_framework',
+    'authentication',
     'business',
     'reservation',
-    'authentication',
-    'chatbot'
+    'chatbot',
+    'api',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
