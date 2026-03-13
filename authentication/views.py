@@ -3,15 +3,14 @@ from rest_framework import viewsets, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from drf_spectacular.utils import extend_schema
 from business.models import Business, BusinessUser, Service, SpecialOffer, Staff
 from business.serializers import (
-    BusinessSerializer,
+    BusinessSerializer,   
     BusinessUserSerializer,
     ServiceSerializer,
     SpecialOfferSerializer,
-    StaffSerializer
-)
+    StaffSerializer)
 
 
 # ==========================
@@ -41,6 +40,11 @@ class BusinessViewSet(viewsets.ModelViewSet):
     queryset = Business.objects.all()
     serializer_class = BusinessSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        summary="List all businesses", description="Returns authenticated user's businesses")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 # ==========================
