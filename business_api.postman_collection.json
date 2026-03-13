@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Business API with JWT",
+    "name": "Business auth with JWT",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "business-api-jwt"
+    "_postman_id": "business-auth-jwt"
   },
   "item": [
     {
@@ -19,7 +19,7 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"pass\"\n}"
             },
-            "url": { "raw": "http://127.0.0.1:8000/api/token/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "token", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/token/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "token", ""] }
           }
         },
         {
@@ -33,7 +33,7 @@
               "mode": "raw",
               "raw": "{\n  \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MzUwNTk1NywiaWF0IjoxNzczNDE5NTU3LCJqdGkiOiJiNzhhZWQ2ZjFkOTg0NWRlYjVjMWY0NWE5NzhjMmFlZCIsInVzZXJfaWQiOiIzIn0.0tHUraS_1nSKsAORejOYsKfVzmxGlh2_gBYbbQUYoOA\"\n}"
             },
-            "url": { "raw": "http://127.0.0.1:8000/api/token/refresh/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "token", "refresh", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/token/refresh/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "token", "refresh", ""] }
           }
         }
       ]
@@ -46,7 +46,7 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNDIxMzk2LCJpYXQiOjE3NzM0MTk1OTYsImp0aSI6ImY5MmQzOTk2ODExNTRhNGVhZTc5YTgyNzljZGZjMGVhIiwidXNlcl9pZCI6IjMifQ.OasSTFyAKp3bCLEYSe42JI0Hp4tLBDTjx_lTh0xEcSo" }],
-            "url": { "raw": "http://127.0.0.1:8000/api/businesses/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "businesses", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/businesses/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "businesses", ""] }
           }
         },
         {
@@ -61,7 +61,7 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Test Business\",\n  \"description\": \"Demo business\",\n  \"address\": \"123 Street\",\n  \"phone_number\": \"1234567890\",\n  \"email\": \"test@business.com\",\n  \"domain\": \"example.com\",\n  \"timezone\": \"UTC\",\n  \"opening_time\": \"09:00:00\",\n  \"closing_time\": \"18:00:00\",\n  \"max_reservations_per_hour\": 10\n}"
             },
-            "url": { "raw": "http://127.0.0.1:8000/api/businesses/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "businesses", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/businesses/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "businesses", ""] }
           }
         }
       ]
@@ -74,7 +74,7 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNDIxMzk2LCJpYXQiOjE3NzM0MTk1OTYsImp0aSI6ImY5MmQzOTk2ODExNTRhNGVhZTc5YTgyNzljZGZjMGVhIiwidXNlcl9pZCI6IjMifQ.OasSTFyAKp3bCLEYSe42JI0Hp4tLBDTjx_lTh0xEcSo" }],
-            "url": { "raw": "http://127.0.0.1:8000/api/services/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "services", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/services/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "services", ""] }
           }
         },
         {
@@ -89,7 +89,7 @@
               "mode": "raw",
               "raw": "{\n  \"business\": 1,\n  \"name\": \"Haircut\",\n  \"description\": \"Standard haircut\",\n  \"price\": 15.00,\n  \"duration\": \"01:00:00\",\n  \"discount_percentage\": 0.0\n}"
             },
-            "url": { "raw": "http://127.0.0.1:8000/api/services/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "services", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/services/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "services", ""] }
           }
         }
       ]
@@ -102,7 +102,7 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNDIxMzk2LCJpYXQiOjE3NzM0MTk1OTYsImp0aSI6ImY5MmQzOTk2ODExNTRhNGVhZTc5YTgyNzljZGZjMGVhIiwidXNlcl9pZCI6IjMifQ.OasSTFyAKp3bCLEYSe42JI0Hp4tLBDTjx_lTh0xEcSo" }],
-            "url": { "raw": "http://127.0.0.1:8000/api/staff/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "staff", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/staff/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "staff", ""] }
           }
         },
         {
@@ -117,7 +117,7 @@
               "mode": "raw",
               "raw": "{\n  \"business\": 1,\n  \"name\": \"John Doe\",\n  \"email\": \"john@business.com\",\n  \"phone\": \"1234567890\",\n  \"position\": \"Stylist\",\n  \"salary\": 500.00,\n  \"availability\": \"{\\\"mon\\\": \\\"9-18\\\"}\",\n  \"is_active\": true\n}"
             },
-            "url": { "raw": "http://127.0.0.1:8000/api/staff/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "staff", ""] }
+            "url": { "raw": "http://127.0.0.1:8000/auth/staff/", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["auth", "staff", ""] }
           }
         }
       ]
