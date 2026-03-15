@@ -15,37 +15,48 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-# project/urls.py
-
-from django.contrib import admin
+#from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.contrib import admin
 
 from authentication.views import (
-    BusinessViewSet,
-    BusinessUserViewSet,
-    ServiceViewSet,
-    SpecialOfferViewSet,
-    StaffViewSet,
-    CustomTokenObtainPairView,
-    CustomTokenRefreshView,
+    RegisterBusinessUser,
+    MyBusinessView,
+    MyServiceViewSet,
+    MySpecialOfferViewSet,
+)
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
 )
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-router = DefaultRouter()
 
-router.register(r'businesses', BusinessViewSet)
-router.register(r'business-users', BusinessUserViewSet)
-router.register(r'services', ServiceViewSet)
-router.register(r'offers', SpecialOfferViewSet)
-router.register(r'staff', StaffViewSet)
+router = DefaultRouter()
+router.register(r'services', MyServiceViewSet, basename='services')
+router.register(r'offers', MySpecialOfferViewSet, basename='offers')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/token/', CustomTokenObtainPairView.as_view()),
-    path('api/token/refresh/', CustomTokenRefreshView.as_view()),
+
+    # register business owner
+    path('api/register/', RegisterBusinessUser.as_view()),
+
+    # jwt auth
+    path('api/token/', TokenObtainPairView.as_view()),
+    path('api/token/refresh/', TokenRefreshView.as_view()),
+
+    # business info
+    path('api/my-business/', MyBusinessView.as_view()),
+
+    # services + offers
     path('api/', include(router.urls)),
+
+    # API docs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
 ]
