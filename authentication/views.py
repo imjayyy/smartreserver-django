@@ -63,14 +63,46 @@ class RegisterBusinessUser(APIView):
 # =========================
 # Business View
 # =========================
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from business.models import BusinessUser
+from business.serializers import BusinessSerializer
+
+
 class MyBusinessView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get_object(self, request):
+        return BusinessUser.objects.get(user=request.user).business
+
+    # GET → read business
     def get(self, request):
-        business_user = BusinessUser.objects.get(user=request.user)
-        serializer = BusinessSerializer(business_user.business)
+        business = self.get_object(request)
+        serializer = BusinessSerializer(business)
         return Response(serializer.data)
 
+    # PUT → full update
+    def put(self, request):
+        business = self.get_object(request)
+        serializer = BusinessSerializer(business, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    # PATCH → partial update
+    def patch(self, request):
+        business = self.get_object(request)
+        serializer = BusinessSerializer(
+            business,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 # =========================
 # Services for Business
