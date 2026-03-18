@@ -32,7 +32,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 
 router = DefaultRouter()
@@ -55,6 +55,7 @@ urlpatterns = [
 
     # services + offers
     path('api/', include(router.urls)),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     # API docs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

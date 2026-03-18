@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
+
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from business.models import Business, BusinessUser, Service, SpecialOffer
 from business.serializers import (
@@ -18,6 +19,21 @@ User = get_user_model()
 # =========================
 # Register Business User
 # =========================
+@extend_schema(
+    summary="Create Business User",
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "email": {"type": "string"},
+                "password": {"type": "string"},
+                "business_name": {"type": "string"},
+            },
+            "required": ["email", "password", "business_name"],
+        }
+    },
+    responses={201: None},
+)
 class RegisterBusinessUser(APIView):
     permission_classes = [AllowAny]
 
@@ -31,7 +47,6 @@ class RegisterBusinessUser(APIView):
                 {"error": "email, password, business_name required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-            
 
         if User.objects.filter(email=email).exists():
             return Response(
@@ -39,7 +54,7 @@ class RegisterBusinessUser(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        user = User.objects.create(email=email,)
+        user = User.objects.create(email=email)
         user.set_password(str(password))
         user.save()
 
@@ -63,28 +78,33 @@ class RegisterBusinessUser(APIView):
 # =========================
 # Business View
 # =========================
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from business.models import BusinessUser
-from business.serializers import BusinessSerializer
-
-
+@extend_schema_view(
+    get=extend_schema(
+        summary="Get Your Business",
+        responses=BusinessSerializer
+    ),
+    put=extend_schema(
+        summary="Update Business",
+        request=BusinessSerializer,
+        responses=BusinessSerializer
+    ),
+    patch=extend_schema(
+        summary="Partial Update Business",
+        request=BusinessSerializer,
+        responses=BusinessSerializer
+    ),
+)
 class MyBusinessView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, request):
         return BusinessUser.objects.get(user=request.user).business
 
-    # GET → read business
     def get(self, request):
         business = self.get_object(request)
         serializer = BusinessSerializer(business)
         return Response(serializer.data)
 
-    # PUT → full update
     def put(self, request):
         business = self.get_object(request)
         serializer = BusinessSerializer(business, data=request.data)
@@ -92,7 +112,6 @@ class MyBusinessView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    # PATCH → partial update
     def patch(self, request):
         business = self.get_object(request)
         serializer = BusinessSerializer(
@@ -104,9 +123,18 @@ class MyBusinessView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+
 # =========================
-# Services for Business
+# Services
 # =========================
+@extend_schema_view(
+    list=extend_schema(summary="List My Services", responses=ServiceSerializer(many=True)),
+    retrieve=extend_schema(summary="Retrieve Service", responses=ServiceSerializer),
+    create=extend_schema(summary="Create Service", request=ServiceSerializer, responses=ServiceSerializer),
+    update=extend_schema(summary="Update Service", request=ServiceSerializer, responses=ServiceSerializer),
+    partial_update=extend_schema(summary="Partial Update Service", request=ServiceSerializer, responses=ServiceSerializer),
+    destroy=extend_schema(summary="Delete Service"),
+)
 class MyServiceViewSet(viewsets.ModelViewSet):
     serializer_class = ServiceSerializer
     permission_classes = [IsAuthenticated]
@@ -121,8 +149,16 @@ class MyServiceViewSet(viewsets.ModelViewSet):
 
 
 # =========================
-# Special Offers for Business
+# Special Offers
 # =========================
+@extend_schema_view(
+    list=extend_schema(summary="List My Special Offers", responses=SpecialOfferSerializer(many=True)),
+    retrieve=extend_schema(summary="Retrieve Special Offer", responses=SpecialOfferSerializer),
+    create=extend_schema(summary="Create Special Offer", request=SpecialOfferSerializer, responses=SpecialOfferSerializer),
+    update=extend_schema(summary="Update Special Offer", request=SpecialOfferSerializer, responses=SpecialOfferSerializer),
+    partial_update=extend_schema(summary="Partial Update Special Offer", request=SpecialOfferSerializer, responses=SpecialOfferSerializer),
+    destroy=extend_schema(summary="Delete Special Offer"),
+)
 class MySpecialOfferViewSet(viewsets.ModelViewSet):
     serializer_class = SpecialOfferSerializer
     permission_classes = [IsAuthenticated]

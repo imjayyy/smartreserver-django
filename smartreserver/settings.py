@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
-    'drf_spectacular_sidecar',
     'rest_framework',
     'authentication',
     'business',
@@ -146,10 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 from datetime import timedelta
 
 SPECTACULAR_SETTINGS = {
-    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
-    # OTHER SETTINGS
+    'TITLE': 'API Swagger',
+    'DESCRIPTION': 'Smartreserver API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 REST_FRAMEWORK = {
@@ -166,3 +165,5 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES']
