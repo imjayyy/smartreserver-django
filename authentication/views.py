@@ -3,15 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
-
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from business.models import Business, BusinessUser, Service, SpecialOffer
 from business.serializers import (
     BusinessSerializer,
     ServiceSerializer,
-    SpecialOfferSerializer
-)
+    SpecialOfferSerializer)
 
 User = get_user_model()
 
@@ -28,7 +26,7 @@ User = get_user_model()
                 "email": {"type": "string"},
                 "password": {"type": "string"},
                 "business_name": {"type": "string"},
-            },
+                },
             "required": ["email", "password", "business_name"],
         }
     },

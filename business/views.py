@@ -26,5 +26,3 @@ class ServiceCreateView(DashboardMixin, CreateView):
         # For simplicity, assume user belongs to one business
         form.instance.business = self.request.user.businessuser_set.first().business
         return super().form_valid(form)
-
-# Similar views for SpecialOffer and Reservation (read-only)

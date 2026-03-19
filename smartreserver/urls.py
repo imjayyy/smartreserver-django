@@ -42,22 +42,12 @@ router.register(r'offers', MySpecialOfferViewSet, basename='offers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # register business owner
     path('api/register/', RegisterBusinessUser.as_view()),
-
-    # jwt auth
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
-
-    # business info
     path('api/my-business/', MyBusinessView.as_view()),
-
-    # services + offers
     path('api/', include(router.urls)),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-
-    # API docs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
 ]
