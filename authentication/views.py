@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, extend_schema_view
-
+from django.shortcuts import get_object_or_404
 from business.models import Business, BusinessUser, Service, SpecialOffer
 from business.serializers import (
     BusinessSerializer,
@@ -96,12 +96,17 @@ class MyBusinessView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, request):
-        return BusinessUser.objects.get(user=request.user).business
+        business_user = get_object_or_404(
+            BusinessUser,
+            user=request.user
+        )
+        return business_user.business
 
     def get(self, request):
         business = self.get_object(request)
         serializer = BusinessSerializer(business)
         return Response(serializer.data)
+
 
     def put(self, request):
         business = self.get_object(request)
@@ -138,11 +143,17 @@ class MyServiceViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        business_user = BusinessUser.objects.get(user=self.request.user)
+        business_user = get_object_or_404(
+            BusinessUser,
+            user=self.request.user
+        )
         return Service.objects.filter(business=business_user.business)
 
     def perform_create(self, serializer):
-        business_user = BusinessUser.objects.get(user=self.request.user)
+        business_user = get_object_or_404(
+            BusinessUser,
+            user=self.request.user
+        )
         serializer.save(business=business_user.business)
 
 
@@ -162,9 +173,15 @@ class MySpecialOfferViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        business_user = BusinessUser.objects.get(user=self.request.user)
+        business_user = get_object_or_404(
+            BusinessUser,
+            user=self.request.user
+        )
         return SpecialOffer.objects.filter(business=business_user.business)
 
     def perform_create(self, serializer):
-        business_user = BusinessUser.objects.get(user=self.request.user)
+        business_user = get_object_or_404(
+            BusinessUser,
+            user=self.request.user
+        )
         serializer.save(business=business_user.business)
