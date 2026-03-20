@@ -13,10 +13,7 @@ from business.serializers import (
 
 User = get_user_model()
 
-
-# =========================
 # Register Business User
-# =========================
 @extend_schema(
     summary="Create Business User",
     request={
@@ -72,10 +69,7 @@ class RegisterBusinessUser(APIView):
             status=status.HTTP_201_CREATED
         )
 
-
-# =========================
 # Business View
-# =========================
 @extend_schema_view(
     get=extend_schema(
         summary="Get Your Business",
@@ -126,10 +120,7 @@ class MyBusinessView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-
-# =========================
 # Services
-# =========================
 @extend_schema_view(
     list=extend_schema(summary="List My Services", responses=ServiceSerializer(many=True)),
     retrieve=extend_schema(summary="Retrieve Service", responses=ServiceSerializer),
@@ -156,10 +147,7 @@ class MyServiceViewSet(viewsets.ModelViewSet):
         )
         serializer.save(business=business_user.business)
 
-
-# =========================
 # Special Offers
-# =========================
 @extend_schema_view(
     list=extend_schema(summary="List My Special Offers", responses=SpecialOfferSerializer(many=True)),
     retrieve=extend_schema(summary="Retrieve Special Offer", responses=SpecialOfferSerializer),
