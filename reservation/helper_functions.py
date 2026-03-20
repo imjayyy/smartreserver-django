@@ -5,10 +5,13 @@ from .models import Reservation, ReservationPolicy
 from business.models import Service
 
 def get_available_slots(business, target_date, service_ids=None, party_size=1):
-    """
-    Return list of available start times for a given business and date.
-    Optionally filter by services (to determine duration) and party size.
-    """
+    # Get hours for the day
+    open_time, close_time = get_business_hours_for_day(business, target_date)
+    if open_time is None or close_time is None:
+        return []  # closed all day
+
+    open_dt = datetime.combine(target_date, open_time)
+    close_dt = datetime.combine(target_date, close_time)
     try:
         policy = business.reservationpolicy
     except ReservationPolicy.DoesNotExist:
@@ -98,3 +101,29 @@ def create_reservation(business, customer_data, service_ids, reservation_date, r
         reservation.services.set(service_ids)
     # end_time will be auto-calculated in save()
     return reservation, None
+
+
+from datetime import time, datetime
+import json
+
+def get_business_hours_for_day(business, target_date):
+    """
+    Return (open_time, close_time) for the given business on the target_date.
+    If closed, return (None, None).
+    """
+    hours = business.hours or {}
+    day_name = target_date.strftime('%A').lower()  # e.g., 'monday'
+    day_info = hours.get(day_name)
+
+    if not day_info or day_info == "closed":
+        return None, None
+
+    # Parse open and close strings
+    open_str = day_info.get('open')
+    close_str = day_info.get('close')
+    if not open_str or not close_str:
+        return None, None
+
+    open_time = datetime.strptime(open_str, '%H:%M').time()
+    close_time = datetime.strptime(close_str, '%H:%M').time()
+    return open_time, close_time

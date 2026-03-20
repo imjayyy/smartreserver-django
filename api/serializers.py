@@ -1,8 +1,20 @@
 from rest_framework import serializers
-from reservation.models import Reservation
+from business.models import Service, SpecialOffer, Staff, Business
 
-class ReservationSerializer(serializers.ModelSerializer):
+class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Reservation
+        model = Service
         fields = '__all__'
-        read_only_fields = ('uuid', 'created_at', 'end_time')
+        read_only_fields = ('business',)  # set business from request
+
+class SpecialOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpecialOffer
+        fields = '__all__'
+        read_only_fields = ('business',)
+
+class StaffSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Staff
+        fields = '__all__'
+        read_only_fields = ('business',)

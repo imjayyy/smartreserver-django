@@ -12,9 +12,11 @@ class Business(models.Model):
     email = models.EmailField(blank=True)
     domain = models.CharField(max_length=100, blank=True, help_text="Website domain")
     timezone = models.CharField(max_length=50, default='UTC')
-    # New fields for hours (could be JSON or separate model, but simple TimeFields for now)
-    opening_time = models.TimeField(null=True, blank=True)
-    closing_time = models.TimeField(null=True, blank=True)
+    hours = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="JSON format: {'monday': {'open': '09:00', 'close': '17:00'}, ...}"
+    )
     max_reservations_per_hour = models.IntegerField(default=10, help_text="Maximum bookings per hour")
 
     def __str__(self):

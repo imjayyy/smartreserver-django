@@ -1,30 +1,54 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Service, SpecialOffer
-from reservation.models import Reservation
+from rest_framework import viewsets, permissions
+from .models import Business, Service, SpecialOffer, Staff
+from .serializers import BusinessSerializer, ServiceSerializer, SpecialOfferSerializer, StaffSerializer
+from .helper_functions import get_user_business
 
-class DashboardMixin(LoginRequiredMixin):
+class BusinessViewSet(viewsets.ModelViewSet):
+    serializer_class = BusinessSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_queryset(self):
-        # Filter by businesses the logged-in user is associated with
-        user_businesses = self.request.user.businessuser_set.values_list('business', flat=True)
-        return super().get_queryset().filter(business__in=user_businesses)
+        # Return only the business of the logged-in user (assumes one business per user)
+        business = get_user_business(self.request.user)
+        return Business.objects.filter(id=business.id)
 
-class ServiceListView(DashboardMixin, ListView):
-    model = Service
-    template_name = 'business/service_list.html'
-    context_object_name = 'services'
+    def perform_update(self, serializer):
+        # Ensure the business being updated belongs to the user
+        business = get_user_business(self.request.user)
+        serializer.save(id=business.id)  # id is unchanged, but we force it
 
-class ServiceCreateView(DashboardMixin, CreateView):
-    model = Service
-    fields = ['name', 'description', 'price', 'duration', 'discount_percentage']
-    template_name = 'business/service_form.html'
-    success_url = reverse_lazy('service-list')
+class ServiceViewSet(viewsets.ModelViewSet):
+    serializer_class = ServiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def form_valid(self, form):
-        # Set business from the user's first business (or let user choose)
-        # For simplicity, assume user belongs to one business
-        form.instance.business = self.request.user.businessuser_set.first().business
-        return super().form_valid(form)
+    def get_queryset(self):
+        business = get_user_business(self.request.user)
+        return Service.objects.filter(business=business)
 
-# Similar views for SpecialOffer and Reservation (read-only)
+    def perform_create(self, serializer):
+        business = get_user_business(self.request.user)
+        serializer.save(business=business)
+
+class SpecialOfferViewSet(viewsets.ModelViewSet):
+    serializer_class = SpecialOfferSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        business = get_user_business(self.request.user)
+        return SpecialOffer.objects.filter(business=business)
+
+    def perform_create(self, serializer):
+        business = get_user_business(self.request.user)
+        serializer.save(business=business)
+
+class StaffViewSet(viewsets.ModelViewSet):
+    serializer_class = StaffSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        business = get_user_business(self.request.user)
+        return Staff.objects.filter(business=business)
+
+    def perform_create(self, serializer):
+        business = get_user_business(self.request.user)
+        serializer.save(business=business)
