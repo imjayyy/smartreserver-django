@@ -7,3 +7,5 @@ venv
 migrations
 db.sqlite3
 .env
+env
+__env__
