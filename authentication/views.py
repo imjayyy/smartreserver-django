@@ -173,3 +173,36 @@ class MySpecialOfferViewSet(viewsets.ModelViewSet):
             user=self.request.user
         )
         serializer.save(business=business_user.business)
+        
+from django.db.models import Count, Sum, Q
+from django.utils import timezone
+from datetime import datetime, timedelta
+from reservation.models import Reservation
+from business.models import Service
+from chatbot.agent.business_agent import BusinessAgent
+
+class BusinessAdminChat(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Get business associated with this user
+        business_user = get_object_or_404(BusinessUser, user=request.user)
+        business = business_user.business
+
+        session_id = request.data.get('session_id', request.session.session_key)
+        if not session_id:
+            request.session.save()
+            session_id = request.session.session_key
+
+        message = request.data.get('message')
+        if not message:
+            return Response({'error': 'message required'}, status=400)
+
+        # Create a BusinessAgent (we'll define it)
+        agent = BusinessAgent(business, session_id)
+        try:
+            result = agent.process_message(message)
+        except Exception as e:
+            return Response({'error': f'AI processing failed: {str(e)}'}, status=500)
+
+        return Response({'reply': result['reply']})

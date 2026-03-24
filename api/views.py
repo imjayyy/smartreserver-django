@@ -1,3 +1,4 @@
+#api/views.py
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, serializers
@@ -10,6 +11,10 @@ from datetime import datetime
 # ==========================
 # Chat Endpoint
 # ==========================
+
+from chatbot.agent.agent import Agent
+from chatbot.agent.memory import SessionMemory
+
 @api_view(['POST'])
 def chat(request, business_id):
     try:
@@ -21,14 +26,25 @@ def chat(request, business_id):
     if not message:
         return Response({'error': 'message field required'}, status=400)
 
+    # The Agent expects a session_id. We can use a generic one or let the client provide it.
+    # For simplicity, we'll use a session_id based on request.session or a generated one.
+    session_id = request.session.session_key
+    if not session_id:
+        request.session.save()
+        session_id = request.session.session_key
+
+    # The Agent also expects user_data (name, email, phone) on the first message.
+    # We can either collect it from the request or require it in the payload.
+    # For now, we assume it's provided in the request (same as original).
+    user_data = request.data.get('user', None)
+
+    agent = Agent(business_id, session_id, user_data)
     try:
-        ai = AIService(business_id)
-        reply = ai.process_message(message)
+        result = agent.process_message(message)
     except Exception as e:
         return Response({'error': f'AI processing failed: {str(e)}'}, status=500)
 
-    return Response({'reply': reply}, status=200)
-
+    return Response({'reply': result['reply']}, status=200)
 
 # ==========================
 # Availability Endpoint

@@ -15,10 +15,6 @@ User = get_user_model()
 # Business Serializer
 # ======================================
 class BusinessSerializer(serializers.ModelSerializer):
-    """
-    Serializes Business core information.
-    """
-
     class Meta:
         model = Business
         fields = [
@@ -30,11 +26,9 @@ class BusinessSerializer(serializers.ModelSerializer):
             "email",
             "domain",
             "timezone",
-            "opening_time",
-            "closing_time",
+            "hours",
             "max_reservations_per_hour",
         ]
-
 
 # ======================================
 # Business User Serializer

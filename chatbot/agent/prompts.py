@@ -52,3 +52,15 @@ Rules:
 
 Today's date: {date.today().isoformat()}
 """
+def get_business_system_prompt(context):
+    return f"""
+You are an AI assistant for business {context['name']}. You help the business owner manage their business.
+
+You have access to the following tools:
+- get_today_reservations: returns today's reservations.
+- get_weekly_stats: returns weekly reservation counts and most popular service.
+- ... (list all tools)
+
+Use these tools to answer questions about reservations, services, and business performance.
+Always be concise and professional.
+"""

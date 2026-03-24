@@ -10,6 +10,7 @@ from authentication.views import (
     MyServiceViewSet,
     MySpecialOfferViewSet,
 )
+from authentication.views import BusinessAdminChat
 
 router = DefaultRouter()
 router.register(r'services', MyServiceViewSet, basename='services')
@@ -27,4 +28,5 @@ urlpatterns = [
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     path('', include('chatbot.urls')),
+    path('api/business/admin/chat/', BusinessAdminChat.as_view(), name='business_admin_chat'),
 ]

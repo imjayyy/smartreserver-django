@@ -20,7 +20,10 @@ class Agent:
         self.memory = SessionMemory(session_id)
         if user_data:
             self.memory.set_user_info(user_data)
-        self.context = self._load_business_context()
+        try:
+            self.context = self._load_business_context()
+        except Business.DoesNotExist:
+            raise ValueError(f"Business with id {business_id} does not exist.")
 
     def _load_business_context(self):
         business = Business.objects.get(id=self.business_id)
@@ -78,15 +81,14 @@ class Agent:
                             "date": {"type": "string", "format": "date"},
                             "time": {"type": "string", "description": "Time in HH:MM format"},
                             "service_ids": {"type": "array", "items": {"type": "integer"}},
-                            "party_size": {"type": "integer"},
+                            "number_of_people": {"type": "integer"},   # changed from party_size
                             "special_requests": {"type": "string", "default": ""}
                         },
-                        "required": ["date", "time", "service_ids", "party_size"]
+                        "required": ["date", "time", "service_ids", "number_of_people"]
                     }
                 }
             }
         ]
-
     def _execute_function(self, name, args):
         if name == "check_availability":
             business = Business.objects.get(id=self.business_id)
@@ -104,13 +106,13 @@ class Agent:
             res_date = datetime.strptime(args['date'], '%Y-%m-%d').date()
             res_time = datetime.strptime(args['time'], '%H:%M').time()
             reservation, error = create_reservation(
-                business=business,
-                customer_data=user_info,
-                service_ids=args['service_ids'],
-                reservation_date=res_date,
-                reservation_time=res_time,
-                party_size=args['party_size'],
-                special_requests=args.get('special_requests', '')
+            business=business,
+            customer_data=user_info,
+            service_ids=args['service_ids'],
+            reservation_date=res_date,
+            reservation_time=res_time,
+            party_size=args['number_of_people'],   # map to party_size parameter
+            special_requests=args.get('special_requests', '')
             )
             if reservation:
                 self.memory.set_last_reservation_id(reservation.id)
@@ -135,7 +137,7 @@ class Agent:
 
         try:
             response = client.chat.completions.create(
-                model="google/gemini-2.0-flash-001",
+                model=settings.OPENROUTER_MODEL,
                 messages=messages,
                 tools=tools,
                 tool_choice="auto",
