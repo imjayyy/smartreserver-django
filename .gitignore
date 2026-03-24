@@ -6,3 +6,4 @@ __pycache__
 venv
 migrations
 db.sqlite3
+.env
