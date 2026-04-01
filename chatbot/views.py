@@ -35,11 +35,6 @@ def chat(request):
 
     business = get_object_or_404(Business, id=business_id)
 
-    # It will show what type is data in terminal
-    print(type(request.data))
-    print(request.content_type)
-    print(request.data)
-
     memory = SessionMemory(session_id)
     existing_user = memory.get_user_info()
 
