@@ -14,6 +14,14 @@ class ChatRateThrottle(UserRateThrottle):
 @api_view(["POST"])
 @throttle_classes([ChatRateThrottle])
 def chat(request):
+
+    # Check if data is json format or not
+    if not isinstance(request.data, dict):
+        return Response(
+            {"error": "Invalid JSON body"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     business_id = request.data.get("business_id")
     session_id = request.data.get("session_id")
     user_data = request.data.get("user", {})
@@ -26,6 +34,11 @@ def chat(request):
         )
 
     business = get_object_or_404(Business, id=business_id)
+
+    # It will show what type is data in terminal
+    print(type(request.data))
+    print(request.content_type)
+    print(request.data)
 
     memory = SessionMemory(session_id)
     existing_user = memory.get_user_info()

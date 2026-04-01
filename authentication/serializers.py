@@ -5,6 +5,40 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from business.models import Business, BusinessUser
+
+
+class RegisterBusinessUserSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, min_length=8)
+    business_name = serializers.CharField(max_length=255)
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("User already exists")
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+        )
+
+        business = Business.objects.create(
+            name=validated_data["business_name"],
+            email=validated_data["email"],
+        )
+
+        BusinessUser.objects.create(
+            user=user,
+            business=business,
+            role="admin",
+        )
+
+        return user
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User.profile.related.model  # Access UserProfile model via related_name

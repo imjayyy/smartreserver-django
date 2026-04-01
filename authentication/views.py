@@ -10,63 +10,27 @@ from business.serializers import (
     BusinessSerializer,
     ServiceSerializer,
     SpecialOfferSerializer)
+from authentication.serializers import RegisterBusinessUserSerializer
 
 User = get_user_model()
 
 # Register Business User
 @extend_schema(
     summary="Create Business User",
-    request={
-        "application/json": {
-            "type": "object",
-            "properties": {
-                "email": {"type": "string"},
-                "password": {"type": "string"},
-                "business_name": {"type": "string"},
-                },
-            "required": ["email", "password", "business_name"],
-        }
-    },
+    request=RegisterBusinessUserSerializer,
     responses={201: None},
 )
 class RegisterBusinessUser(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        email = request.data.get("email")
-        password = request.data.get("password")
-        business_name = request.data.get("business_name")
-
-        if not email or not password or not business_name:
-            return Response(
-                {"error": "email, password, business_name required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if User.objects.filter(email=email).exists():
-            return Response(
-                {"error": "User already exists"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        user = User.objects.create(email=email)
-        user.set_password(str(password))
-        user.save()
-
-        business = Business.objects.create(
-            name=business_name,
-            email=email
-        )
-
-        BusinessUser.objects.create(
-            user=user,
-            business=business,
-            role="admin"
-        )
+        serializer = RegisterBusinessUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
         return Response(
             {"message": "Business user created"},
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
 
 # Business View
